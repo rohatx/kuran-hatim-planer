@@ -1,0 +1,31 @@
+apply plugin: 'com.android.application'
+
+def secretsFile = rootProject.file('secrets.properties')
+def secrets = new Properties()
+if (secretsFile.exists()) {
+    secretsFile.withInputStream { stream -> secrets.load(stream) }
+}
+
+// Production values are read locally. Public builds use Google's test IDs.
+def admobAppId = secrets.getProperty('ADMOB_APP_ID', 'ca-app-pub-3940256099942544~3347511713')
+def admobAdUnitId = secrets.getProperty('ADMOB_AD_UNIT_ID', 'ca-app-pub-3940256099942544/6300978111')
+
+android {
+    namespace 'ry.dev.kuranhatimplanner'
+    compileSdk 37
+    buildFeatures { buildConfig true }
+
+    defaultConfig {
+        applicationId 'ry.dev.kuranhatimplanner'
+        minSdk 24
+        targetSdk 37
+        versionCode 1
+        versionName '1.0'
+        manifestPlaceholders = [admobAppId: admobAppId]
+        buildConfigField 'String', 'ADMOB_AD_UNIT_ID', '"' + admobAdUnitId + '"'
+    }
+}
+dependencies {
+    implementation 'com.google.android.gms:play-services-ads-api:25.5.0'
+    implementation 'com.google.android.gms:play-services-ads:25.5.0'
+}
